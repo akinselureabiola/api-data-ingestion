@@ -29,3 +29,5 @@ def instantiate_boto3_session(aws_access_key_id,aws_secret_access_key ):
 def instantiate_sql_alchemy():
         conn = create_engine("postgresql+psycopg2://staging_db:DnrbWdUcaZxyIc7v@postgres.cnelwn14hnqh.eu-central-1.rds.amazonaws.com:5432/main")
         return conn
+
+        
