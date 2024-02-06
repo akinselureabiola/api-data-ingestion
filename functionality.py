@@ -13,24 +13,25 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash_operator import BashOperator 
 from boto3.session import Session
 from sqlalchemy import create_engine
-from utils import instantiate_s3_client, instantiate_boto3_session, instantiate_sql_alchemy
-
-DAG_ID = 'api_file-extract-and-upload'
+from utils import instantiate_s3_client, instantiate_boto3_session, instantiate_sql_alchemy, dag_id, dag_authenticator, dag
 
 
-default_args = {
+
+dag_id("api_file-extract-and-upload23")
+
+dag_authenticator(default_args = {
     'depends_on_past': False,
     'start_date': datetime.datetime(2022, 7, 29),
     'retries': 3,
     'retry_delay': datetime.timedelta(seconds=10)
-}
+     })
 
-dag = DAG(
-    DAG_ID,
-    default_args=default_args,
+dag(dag = DAG(
+    DAG_ID='api_file-extract-and-upload11',
+    default_args='default_args',
     description='subscription attributes data to the lake',
     tags=["extract_file", "upload_file"]
-)
+    ))
 
 def extract_file():
     url = "http://universities.hipolabs.com/search?country=United+States"
@@ -58,7 +59,7 @@ def transfer_file():
     df = wr.s3.read_parquet(path='s3://staging/uni.parquet', boto3_session=instantiate_boto3_session(Variable.get('ACCESS_KEY'), Variable.get('SECRET_KEY')))
     
     # transfer file from s3 to postgres rds db
-    new_df = df.to_sql("uni-file", con=instantiate_sql_alchemy(), schema="olist")
+    new_df = df.to_sql("uni-file12000", con=instantiate_sql_alchemy(), schema="olist")
     return new_df
     
 
@@ -82,4 +83,3 @@ transfer_file = PythonOperator(
 
 
 extract_file >> upload_file_to_s3 >> transfer_file
-

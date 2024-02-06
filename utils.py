@@ -27,7 +27,32 @@ def instantiate_boto3_session(aws_access_key_id,aws_secret_access_key ):
 
 
 def instantiate_sql_alchemy():
-        conn = create_engine("postgresql+psycopg2://staging_db:DnrbWdUcaZxyIc7v@postgres.cnelwn14hnqh.eu-central-1.rds.amazonaws.com:5432/main")
+        conn = create_engine(Variable.get('postgres_rds_DB_credentials'))
         return conn
 
-        
+def dag_id(DAG_ID):
+    DAG_ID = 'api_file-extract-and-upload11'
+    return DAG_ID
+
+def dag_authenticator(depends_on_past, start_date, retries, retry_delay):
+     default_args = {
+    'depends_on_past': False,
+    'start_date': datetime.datetime(2022, 7, 29),
+    'retries': 3,
+    'retry_delay': datetime.timedelta(seconds=10)
+     }
+     return default_args
+
+
+
+def dag(DAG_ID, default_args, description, tags):
+    dag = DAG(
+    DAG_ID='api_file-extract-and-upload11',
+    default_args='default_args',
+    description='subscription attributes data to the lake',
+    tags=["extract_file", "upload_file"]
+    )
+    return dag
+
+
+
